@@ -1,0 +1,111 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<main class="flex-grow">
+    <div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">Edit Post</h1>
+
+            <% if (errors && errors.length > 0) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <ul>
+                    <% errors.forEach(error => { %>
+                    <li><%= error %></li>
+                    <% }) %>
+                </ul>
+            </div>
+            <% } %>
+
+            <form action="/posts/<%= post.slug %>/edit" method="POST">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                        Title *
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Enter post title"
+                        value="<%= post.title %>"
+                        required
+                    />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                        Content *
+                    </label>
+                    <textarea
+                        id="content"
+                        name="content"
+                        rows="15"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                        placeholder="Write your post content here... (supports HTML)"
+                        required
+                    ><%= post.content %></textarea>
+                    <p class="text-sm text-gray-500 mt-1">You can use HTML tags for formatting.</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="visibility">
+                        Visibility
+                    </label>
+                    <select
+                        id="visibility"
+                        name="visibility"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                        <option value="public" <%= post.visibility === 'public' ? 'selected' : '' %>>Public</option>
+                        <option value="private" <%= post.visibility === 'private' ? 'selected' : '' %>>Private</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="meta_description">
+                        Meta Description (SEO)
+                    </label>
+                    <textarea
+                        id="meta_description"
+                        name="meta_description"
+                        rows="2"
+                        maxlength="160"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Brief description for search engines (max 160 characters)"
+                    ><%= post.meta_description || '' %></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="meta_keywords">
+                        Meta Keywords (SEO)
+                    </label>
+                    <input
+                        type="text"
+                        id="meta_keywords"
+                        name="meta_keywords"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="keyword1, keyword2, keyword3"
+                        value="<%= post.meta_keywords || '' %>"
+                    />
+                </div>
+
+                <div class="flex space-x-4">
+                    <button
+                        type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold"
+                    >
+                        Update Post
+                    </button>
+                    <a
+                        href="/posts/<%= post.slug %>"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-lg font-semibold"
+                    >
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

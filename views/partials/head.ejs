@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title><%= typeof title !== 'undefined' ? title : 'Blog Website' %></title>
+    <meta name="description" content="<%= typeof meta_description !== 'undefined' ? meta_description : 'A modern blog platform built with Node.js and Express' %>">
+    <meta name="keywords" content="<%= typeof meta_keywords !== 'undefined' ? meta_keywords : 'blog, articles, writing, stories' %>">
+    <meta name="author" content="Blog Website">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="<%= typeof og_type !== 'undefined' ? og_type : 'website' %>">
+    <meta property="og:url" content="<%= typeof og_url !== 'undefined' ? og_url : (process.env.BASE_URL || '') %>">
+    <meta property="og:title" content="<%= typeof og_title !== 'undefined' ? og_title : (typeof title !== 'undefined' ? title : 'Blog Website') %>">
+    <meta property="og:description" content="<%= typeof og_description !== 'undefined' ? og_description : (typeof meta_description !== 'undefined' ? meta_description : 'A modern blog platform') %>">
+    <meta property="og:image" content="<%= typeof og_image !== 'undefined' ? og_image : (process.env.BASE_URL + '/images/default-og.jpg') %>">
+
+    <!-- X (formerly Twitter) / Open Graph -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="<%= typeof og_url !== 'undefined' ? og_url : (process.env.BASE_URL || '') %>">
+    <meta property="twitter:title" content="<%= typeof og_title !== 'undefined' ? og_title : (typeof title !== 'undefined' ? title : 'Blog Website') %>">
+    <meta property="twitter:description" content="<%= typeof og_description !=='undefined' ? og_description : (typeof meta_description !== 'undefined' ? meta_description : 'A modern blog platform') %>">
+    <meta property="twitter:image" content="<%= typeof og_image !== 'undefined' ? og_image : (process.env.BASE_URL + '/images/default-og.jpg') %>">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom styles -->
+    <style>
+        .prose-content {
+            max-width: none;
+        }
+        .prose-content p {
+            margin-bottom: 1rem;
+        }
+        .prose-content h1, .prose-content h2, .prose-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
