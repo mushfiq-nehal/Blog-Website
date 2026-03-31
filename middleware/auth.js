@@ -1,14 +1,12 @@
-// Middleware to check if user is authenticated
 const isAuthenticated = (req, res, next) => {
     if (req.session && req.session.userId) {
         return next();
     }
     req.session.returnTo = req.originalUrl;
-    req.flash = req.flash || {};
     res.redirect('/auth/login?error=Please login to continue');
 };
 
-// Middleware to check if user is admin
+
 const isAdmin = (req, res, next) => {
     if (req.session && req.session.userId && req.session.userRole === 'admin') {
         return next();
@@ -20,7 +18,6 @@ const isAdmin = (req, res, next) => {
     });
 };
 
-// Middleware to check if user is guest (not logged in)
 const isGuest = (req, res, next) => {
     if (!req.session.userId) {
         return next();
@@ -28,7 +25,6 @@ const isGuest = (req, res, next) => {
     res.redirect('/');
 };
 
-// Middleware to attach user to all views
 const attachUser = (req, res, next) => {
     if (req.session.userId) {
         res.locals.user = {

@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Create PostgreSQL connection pool
+
 const pool = new Pool({
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT) || 5432,
@@ -13,7 +13,7 @@ const pool = new Pool({
     connectionTimeoutMillis: 2000,
 });
 
-// Test database connection
+
 pool.on('connect', () => {
     console.log('Database connected successfully');
 });
@@ -23,7 +23,7 @@ pool.on('error', (err) => {
     process.exit(-1);
 });
 
-// Query helper function with error handling
+
 const query = async (text, params) => {
     const start = Date.now();
     try {

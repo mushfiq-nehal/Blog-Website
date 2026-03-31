@@ -2,19 +2,19 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { isGuest } = require('../middleware/auth');
-const { loginValidation, registerValidation, validate } = require('../middleware/validation');
+const { validateLogin, validateRegistration } = require('../middleware/validation');
 
 // Show login page
 router.get('/login', isGuest, authController.showLogin);
 
 // Handle login
-router.post('/login', isGuest, loginValidation, authController.login);
+router.post('/login', isGuest, validateLogin, authController.login);
 
 // Show register page
 router.get('/register', isGuest, authController.showRegister);
 
 // Handle registration
-router.post('/register', isGuest, registerValidation, authController.register);
+router.post('/register', isGuest, validateRegistration, authController.register);
 
 // Handle logout
 router.post('/logout', authController.logout);

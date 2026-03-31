@@ -3,7 +3,7 @@ const User = require('../models/User');
 const Comment = require('../models/Comment');
 
 const adminController = {
-    // Admin dashboard
+    
     dashboard: async (req, res) => {
         try {
             const posts = await Post.getAll();
@@ -32,7 +32,7 @@ const adminController = {
         }
     },
 
-    // Manage posts
+    
     managePosts: async (req, res) => {
         try {
             const posts = await Post.getAll();
@@ -49,7 +49,7 @@ const adminController = {
         }
     },
 
-    // Manage users
+    
     manageUsers: async (req, res) => {
         try {
             const users = await User.getAll();
@@ -66,7 +66,7 @@ const adminController = {
         }
     },
 
-    // Manage comments
+    
     manageComments: async (req, res) => {
         try {
             const comments = await Comment.getAll();

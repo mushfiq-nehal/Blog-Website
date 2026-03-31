@@ -1,7 +1,7 @@
 const db = require('../config/database');
 
 const Comment = {
-    // Create new comment
+
     async create(postId, userId, content, parentId = null) {
         const result = await db.query(
             `INSERT INTO comments (post_id, user_id, content, parent_id)
@@ -12,7 +12,7 @@ const Comment = {
         return result.rows[0];
     },
 
-    // Get all comments for a post (with user info)
+    
     async getByPostId(postId) {
         const result = await db.query(
             `SELECT c.*, u.username, u.email
@@ -25,7 +25,7 @@ const Comment = {
         return result.rows;
     },
 
-    // Get comment by ID
+    
     async findById(id) {
         const result = await db.query(
             `SELECT c.*, u.username
@@ -37,21 +37,21 @@ const Comment = {
         return result.rows[0];
     },
 
-    // Get nested comments structure
+    
     async getNestedComments(postId) {
         const comments = await this.getByPostId(postId);
 
-        // Build nested structure
+        
         const commentMap = {};
         const rootComments = [];
 
-        // First pass: create map
+        
         comments.forEach(comment => {
             comment.replies = [];
             commentMap[comment.id] = comment;
         });
 
-        // Second pass: build tree
+        
         comments.forEach(comment => {
             if (comment.parent_id === null) {
                 rootComments.push(comment);
@@ -66,7 +66,7 @@ const Comment = {
         return rootComments;
     },
 
-    // Get all comments (admin view)
+    
     async getAll() {
         const result = await db.query(
             `SELECT c.*, u.username, p.title as post_title, p.slug as post_slug
@@ -78,7 +78,7 @@ const Comment = {
         return result.rows;
     },
 
-    // Update comment
+    
     async update(id, content) {
         const result = await db.query(
             `UPDATE comments
@@ -90,13 +90,12 @@ const Comment = {
         return result.rows[0];
     },
 
-    // Delete comment and its replies
+    
     async delete(id) {
-        // Delete recursively (cascade will handle it due to FK constraint)
         await db.query('DELETE FROM comments WHERE id = $1', [id]);
     },
 
-    // Get comment count for a post
+
     async getCountByPostId(postId) {
         const result = await db.query(
             'SELECT COUNT(*) as count FROM comments WHERE post_id = $1',

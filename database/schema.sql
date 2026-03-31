@@ -1,13 +1,3 @@
--- Blog Website Database Schema
--- Run this script to set up the database
-
--- Create database (run this separately if needed)
--- CREATE DATABASE blog_db;
-
--- Connect to the database
--- \c blog_db;
-
--- Enable UUID extension if needed
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Users table
@@ -36,7 +26,7 @@ CREATE TABLE IF NOT EXISTS posts (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Comments table (with nested structure)
+-- Comments table 
 CREATE TABLE IF NOT EXISTS comments (
     id SERIAL PRIMARY KEY,
     post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
@@ -47,7 +37,7 @@ CREATE TABLE IF NOT EXISTS comments (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Sessions table (for express-session with connect-pg-simple)
+-- Sessions table 
 CREATE TABLE IF NOT EXISTS session (
     sid VARCHAR NOT NULL COLLATE "default",
     sess JSON NOT NULL,
@@ -63,8 +53,7 @@ CREATE INDEX IF NOT EXISTS idx_comments_post ON comments(post_id);
 CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id);
 CREATE INDEX IF NOT EXISTS idx_session_expire ON session(expire);
 
--- Insert default admin user (password: admin123)
--- IMPORTANT: Change this password in production!
+
 INSERT INTO users (username, email, password, role)
 VALUES (
     'admin',
@@ -73,8 +62,7 @@ VALUES (
     'admin'
 ) ON CONFLICT (username) DO NOTHING;
 
--- Insert sample user (password: user123)
--- IMPORTANT: Change this password in production!
+
 INSERT INTO users (username, email, password, role)
 VALUES (
     'user',

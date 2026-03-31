@@ -2,11 +2,10 @@ const db = require('../config/database');
 const slugify = require('slugify');
 
 const Post = {
-    // Create new post
     async create(postData) {
         const { title, content, author_id, visibility, meta_description, meta_keywords } = postData;
 
-        // Generate unique slug
+
         let slug = slugify(title, { lower: true, strict: true });
         const slugCheck = await db.query('SELECT slug FROM posts WHERE slug = $1', [slug]);
 
@@ -14,7 +13,7 @@ const Post = {
             slug = `${slug}-${Date.now()}`;
         }
 
-        // Generate excerpt from content (first 150 characters)
+    
         const excerpt = content.substring(0, 150).replace(/<[^>]*>/g, '') + '...';
 
         const result = await db.query(
@@ -26,7 +25,6 @@ const Post = {
         return result.rows[0];
     },
 
-    // Find post by ID
     async findById(id) {
         const result = await db.query(
             `SELECT p.*, u.username as author_name, u.email as author_email
@@ -38,7 +36,7 @@ const Post = {
         return result.rows[0];
     },
 
-    // Find post by slug
+    
     async findBySlug(slug) {
         const result = await db.query(
             `SELECT p.*, u.username as author_name, u.email as author_email
@@ -50,7 +48,7 @@ const Post = {
         return result.rows[0];
     },
 
-    // Get all public posts
+    
     async getAllPublic() {
         const result = await db.query(
             `SELECT p.*, u.username as author_name
@@ -62,7 +60,7 @@ const Post = {
         return result.rows;
     },
 
-    // Get all posts (admin view)
+    
     async getAll() {
         const result = await db.query(
             `SELECT p.*, u.username as author_name
@@ -73,7 +71,7 @@ const Post = {
         return result.rows;
     },
 
-    // Get posts by author
+    
     async getByAuthor(authorId) {
         const result = await db.query(
             `SELECT p.*, u.username as author_name
@@ -86,11 +84,11 @@ const Post = {
         return result.rows;
     },
 
-    // Update post
+    
     async update(id, postData) {
         const { title, content, visibility, meta_description, meta_keywords } = postData;
 
-        // Generate new slug if title changed
+        
         let slug = slugify(title, { lower: true, strict: true });
         const currentPost = await db.query('SELECT slug FROM posts WHERE id = $1', [id]);
 
@@ -116,20 +114,19 @@ const Post = {
         return result.rows[0];
     },
 
-    // Delete post
+    
     async delete(id) {
         await db.query('DELETE FROM posts WHERE id = $1', [id]);
     },
 
-    // Check if user can access post
+    
     async canAccess(postId, userId, userRole) {
         const post = await this.findById(postId);
         if (!post) return false;
 
-        // Public posts are accessible to everyone
+
         if (post.visibility === 'public') return true;
 
-        // Private posts accessible to author and admin
         if (userRole === 'admin' || post.author_id === userId) return true;
 
         return false;

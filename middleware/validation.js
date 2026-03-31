@@ -1,83 +1,120 @@
-const { body, validationResult } = require('express-validator');
-
-// Validation middleware
+// Basic validation middleware
 const validate = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        // Store errors in session or return as JSON
-        req.validationErrors = errors.array();
-        return res.status(400).json({ errors: errors.array() });
+    const errors = [];
+
+    // Check for validation errors in req.validationErrors
+    if (req.validationErrors && req.validationErrors.length > 0) {
+        return res.status(400).json({ errors: req.validationErrors });
     }
+
     next();
 };
 
-// Registration validation rules
-const registerValidation = [
-    body('username')
-        .trim()
-        .isLength({ min: 3, max: 50 })
-        .withMessage('Username must be between 3 and 50 characters')
-        .matches(/^[a-zA-Z0-9_]+$/)
-        .withMessage('Username can only contain letters, numbers, and underscores'),
-    body('email')
-        .trim()
-        .isEmail()
-        .withMessage('Please provide a valid email')
-        .normalizeEmail(),
-    body('password')
-        .isLength({ min: 6 })
-        .withMessage('Password must be at least 6 characters long'),
-    body('confirmPassword')
-        .custom((value, { req }) => value === req.body.password)
-        .withMessage('Passwords do not match')
-];
+// Registration validation
+const validateRegistration = (req, res, next) => {
+    const { username, email, password, confirmPassword } = req.body;
+    const errors = [];
 
-// Login validation rules
-const loginValidation = [
-    body('username')
-        .trim()
-        .notEmpty()
-        .withMessage('Username is required'),
-    body('password')
-        .notEmpty()
-        .withMessage('Password is required')
-];
+    // Username validation
+    if (!username || username.length < 3 || username.length > 50) {
+        errors.push('Username must be between 3 and 50 characters');
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        errors.push('Username can only contain letters, numbers, and underscores');
+    }
 
-// Post validation rules
-const postValidation = [
-    body('title')
-        .trim()
-        .isLength({ min: 3, max: 255 })
-        .withMessage('Title must be between 3 and 255 characters'),
-    body('content')
-        .trim()
-        .isLength({ min: 10 })
-        .withMessage('Content must be at least 10 characters long'),
-    body('visibility')
-        .optional()
-        .isIn(['public', 'private'])
-        .withMessage('Visibility must be either public or private'),
-    body('meta_description')
-        .optional()
-        .trim()
-        .isLength({ max: 160 })
-        .withMessage('Meta description should not exceed 160 characters'),
-    body('meta_keywords')
-        .optional()
-        .trim()
-];
+    // Email validation
+    if (!email || !email.includes('@')) {
+        errors.push('Please provide a valid email');
+    }
 
-// Comment validation rules
-const commentValidation = [
-    body('content')
-        .trim()
-        .isLength({ min: 1, max: 1000 })
-        .withMessage('Comment must be between 1 and 1000 characters')
-];
+    // Password validation
+    if (!password || password.length < 6) {
+        errors.push('Password must be at least 6 characters long');
+    }
 
-// Sanitize HTML to prevent XSS (basic)
+    // Confirm password
+    if (password !== confirmPassword) {
+        errors.push('Passwords do not match');
+    }
+
+    if (errors.length > 0) {
+        return res.render('auth/register', {
+            title: 'Register',
+            error: errors.join(', ')
+        });
+    }
+
+    next();
+};
+
+// Login validation
+const validateLogin = (req, res, next) => {
+    const { username, password } = req.body;
+    const errors = [];
+
+    if (!username) {
+        errors.push('Username is required');
+    }
+
+    if (!password) {
+        errors.push('Password is required');
+    }
+
+    if (errors.length > 0) {
+        return res.render('auth/login', {
+            title: 'Login',
+            error: errors.join(', ')
+        });
+    }
+
+    next();
+};
+
+// Post validation
+const validatePost = (req, res, next) => {
+    const { title, content } = req.body;
+    const errors = [];
+
+    if (!title || title.length < 3 || title.length > 255) {
+        errors.push('Title must be between 3 and 255 characters');
+    }
+
+    if (!content || content.length < 10) {
+        errors.push('Content must be at least 10 characters long');
+    }
+
+    if (errors.length > 0) {
+        return res.render('posts/create', {
+            title: 'Create Post',
+            error: errors.join(', '),
+            post: { title, content }
+        });
+    }
+
+    next();
+};
+
+// Comment validation
+const validateComment = (req, res, next) => {
+    const { content } = req.body;
+    const errors = [];
+
+    if (!content || content.length < 1 || content.length > 1000) {
+        errors.push('Comment must be between 1 and 1000 characters');
+    }
+
+    if (errors.length > 0) {
+        return res.status(400).json({ error: errors.join(', ') });
+    }
+
+    next();
+};
+
+// Basic HTML sanitization
 const sanitizeHtml = (html) => {
-    // Basic sanitization - in production, use a library like DOMPurify or sanitize-html
+    if (!html) return '';
+    // Simple sanitization - replace potential dangerous tags
     return html
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '');
@@ -85,9 +122,9 @@ const sanitizeHtml = (html) => {
 
 module.exports = {
     validate,
-    registerValidation,
-    loginValidation,
-    postValidation,
-    commentValidation,
+    validateRegistration,
+    validateLogin,
+    validatePost,
+    validateComment,
     sanitizeHtml
 };

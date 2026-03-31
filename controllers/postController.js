@@ -3,7 +3,7 @@ const Comment = require('../models/Comment');
 const { sanitizeHtml } = require('../middleware/validation');
 
 const postController = {
-    // Show all public posts (home page)
+    
     index: async (req, res) => {
         try {
             const posts = await Post.getAllPublic();
@@ -22,7 +22,7 @@ const postController = {
         }
     },
 
-    // Show single post
+    
     show: async (req, res) => {
         try {
             const { slug } = req.params;
@@ -35,7 +35,7 @@ const postController = {
                 });
             }
 
-            // Check access permission
+            
             const userId = req.session.userId;
             const userRole = req.session.userRole;
 
@@ -46,10 +46,10 @@ const postController = {
                 });
             }
 
-            // Get comments
+            
             const comments = await Comment.getNestedComments(post.id);
 
-            // Generate share URLs
+            
             const shareUrl = `${process.env.BASE_URL}/posts/${post.slug}`;
             const shareUrls = {
                 facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
@@ -77,7 +77,7 @@ const postController = {
         }
     },
 
-    // Show create post form
+    
     showCreate: (req, res) => {
         res.render('posts/create', {
             title: 'Create New Post',
@@ -86,12 +86,12 @@ const postController = {
         });
     },
 
-    // Create new post
+    
     create: async (req, res) => {
         try {
             const { title, content, visibility, meta_description, meta_keywords } = req.body;
 
-            // Sanitize content
+            
             const sanitizedContent = sanitizeHtml(content);
 
             const post = await Post.create({
@@ -103,7 +103,7 @@ const postController = {
                 meta_keywords
             });
 
-            // Redirect to the created post
+            
             res.redirect(`/posts/${post.slug}`);
         } catch (error) {
             console.error('Error creating post:', error);
@@ -115,7 +115,7 @@ const postController = {
         }
     },
 
-    // Show edit post form
+    
     showEdit: async (req, res) => {
         try {
             const { slug } = req.params;
@@ -128,7 +128,7 @@ const postController = {
                 });
             }
 
-            // Check permission
+            
             if (post.author_id !== req.session.userId && req.session.userRole !== 'admin') {
                 return res.status(403).render('error', {
                     title: 'Access Denied',
@@ -150,7 +150,7 @@ const postController = {
         }
     },
 
-    // Update post
+    
     update: async (req, res) => {
         try {
             const { slug } = req.params;
@@ -163,7 +163,7 @@ const postController = {
                 });
             }
 
-            // Check permission
+            
             if (post.author_id !== req.session.userId && req.session.userRole !== 'admin') {
                 return res.status(403).render('error', {
                     title: 'Access Denied',
@@ -189,7 +189,7 @@ const postController = {
         }
     },
 
-    // Delete post
+    
     delete: async (req, res) => {
         try {
             const { slug } = req.params;
@@ -199,7 +199,7 @@ const postController = {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
-            // Check permission
+            
             if (post.author_id !== req.session.userId && req.session.userRole !== 'admin') {
                 return res.status(403).json({ error: 'Access denied' });
             }
