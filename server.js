@@ -32,7 +32,7 @@ app.use(
         cookie: {
             maxAge: 30 * 24 * 60 * 60 * 1000, 
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
+            secure: false, // Render free tier doesn't have HTTPS by default
             sameSite: 'lax'
         }
     })
