@@ -28,7 +28,7 @@ app.use(
         }),
         secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: {
             maxAge: 30 * 24 * 60 * 60 * 1000, 
             httpOnly: true,
